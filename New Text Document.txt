@@ -1,0 +1,59 @@
+	const fs = require('fs');
+	const path = require('path');
+
+	let disposableCreateHtml = vscode.commands.registerCommand('extension.createHtmlFile', async () => {
+		const htmlContent = `<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Document</title>
+	</head>
+	<body>
+		<h1>Hello World!</h1>
+	</body>
+	</html>`;
+	
+		// Pide al usuario el nombre del archivo
+		const fileName = await vscode.window.showInputBox({
+		  prompt: "Enter the name for the HTML file",
+		  value: "index.html"
+		});
+	
+		if (fileName) {
+		  // Obtiene la carpeta del workspace actual
+		  const folderPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+	
+		  // Crea un camino completo para el nuevo archivo
+		  const filePath = path.join(folderPath, fileName);
+	
+		  // Escribe el contenido al archivo en el workspace
+		  fs.writeFile(filePath, htmlContent, 'utf8', (err) => {
+			if (err) {
+			  vscode.window.showErrorMessage('Error creating HTML file: ' + err.message);
+			} else {
+			  // Abre el archivo en el editor
+			  const openPath = vscode.Uri.file(filePath);
+			  vscode.workspace.openTextDocument(openPath).then(doc => {
+				vscode.window.showTextDocument(doc);
+			  });
+			}
+		  });
+		}
+	  });
+	
+	  context.subscriptions.push(disposableCreateHtml);
+	
+}	
+
+    {
+      "command": "extension.createHtmlFile",
+      "title": "Create HTML File"
+    }
+
+
+
+
+package.json: El manifiesto de tu extensión, donde defines el punto de entrada, comandos, contribuciones, dependencias y más.
+src/extension.js (o extension.ts si elegiste TypeScript): El archivo principal donde escribirás la lógica de tu extensión.
